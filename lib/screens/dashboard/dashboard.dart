@@ -9,7 +9,9 @@ import '../loan history/loan_history.dart';
 import '../login/login.dart';
 import '../../utils/navbar.dart';
 import '../my profile/profile_screen.dart';
+import '../pay loans/pay_loans.dart';
 import '../request loan/loan_request.dart';
+import '../withdraw money/withdraw_money.dart';
 
 class DashboardScreen extends StatefulWidget {
   final Map<String, dynamic>? user;
@@ -54,6 +56,49 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
       await fetchRecentLoans();
     }
   }
+
+
+  Future<void> refreshWallet() async {
+    if (_token == null || _wallet == null) {
+      print("⚠️ Cannot refresh wallet, missing token or wallet info.");
+      return;
+    }
+
+    final url = Uri.parse(
+      "http://10.0.2.2:3000/api/wallets/${_wallet!['wallet_id']}",
+    );
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $_token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final newWallet = data["wallet"];
+
+        setState(() {
+          _wallet = newWallet;
+        });
+
+        // Also update SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('wallet', jsonEncode(newWallet));
+
+        print("✅ Wallet refreshed: ${newWallet['balance']}");
+      } else {
+        print("❌ Failed to refresh wallet: ${response.body}");
+      }
+    } catch (e) {
+      print("❌ Network error while refreshing wallet: $e");
+    }
+  }
+
+
 
   Future<void> fetchRecentLoans() async {
     if (_token == null || _user == null) {
@@ -642,10 +687,25 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
             icon: Icons.payment_outlined,
             label: 'Pay\nLoan',
             color: Color(0xFF3B82F6),
-            onTap: () {
-              // Navigate to loan payment screen
-              print('Pay Loan tapped');
-            },
+              onTap: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PayLoanScreen(
+                      user: _user ?? widget.user!,
+                      wallet: _wallet ?? widget.wallet!,
+                      token: _token!,
+                    ),
+                  ),
+                );
+
+                if (result == true) {
+                  await refreshWallet();
+                  await fetchRecentLoans(); // optional if you want to refresh loan list
+                }
+              }
+
+
           ),
         ),
         SizedBox(width: 15),
@@ -654,10 +714,23 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
             icon: Icons.account_balance_outlined,
             label: 'Withdraw\nMoney',
             color: Color(0xFFEF4444),
-            onTap: () {
-              // Navigate to withdrawal screen
-              print('Withdraw Money tapped');
+            onTap: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => WithdrawMoneyScreen(
+                    user: _user ?? widget.user!,
+                    wallet: _wallet ?? widget.wallet!,
+                    token: _token!,
+                  ),
+                ),
+              );
+
+              if (result == true) {
+                await refreshWallet();
+              }
             },
+
           ),
         ),
       ],
