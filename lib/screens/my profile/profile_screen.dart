@@ -1,5 +1,8 @@
+import 'package:dada_loans/screens/loan%20history/loan_history.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import '../request loan/loan_request.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Map<String, dynamic>? user;
@@ -476,8 +479,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
           borderRadius: BorderRadius.circular(16),
           onTap: () {
             HapticFeedback.mediumImpact();
-            // Handle quick action
+            if (label == 'Apply for Loan') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => LoanRequestScreen(
+                    user: widget.user,
+                    wallet: widget.wallet,
+                    token: widget.token,
+                  ),
+                ),
+              );
+            } else if (label == 'View Statements') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => LoanHistoryScreen(   user: widget.user!,
+                    wallet: widget.wallet,
+                    token: widget.token!,
+
+                  ),
+                ),
+              );
+            }
           },
+
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
