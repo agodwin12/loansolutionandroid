@@ -73,7 +73,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
 
     try {
       final response = await http.get(
-        Uri.parse("http://10.0.2.2:3000/api/admin/dashboard-stats"),
+        Uri.parse("http://16.171.240.97:3000/api/admin/dashboard-stats"),
         headers: {
           "Authorization": "Bearer ${widget.token}",
           "Content-Type": "application/json",

@@ -63,7 +63,7 @@ class _LoanHistoryScreenState extends State<LoanHistoryScreen>
 
     try {
       final url = Uri.parse(
-        "http://10.0.2.2:3000/api/loans/user/${widget.user['id']}",
+        "http://16.171.240.97:3000/api/loans/user/${widget.user['id']}",
       );
 
       final response = await http.get(

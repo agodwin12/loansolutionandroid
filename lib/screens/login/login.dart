@@ -13,7 +13,7 @@ Future<Map<String, dynamic>> loginUser({
   required String emailOrPhone,
   required String password,
 }) async {
-  final url = Uri.parse('http://10.0.2.2:3000/api/auth/login');
+  final url = Uri.parse('http://16.171.240.97:3000/api/auth/login');
 
   final response = await http.post(
     url,

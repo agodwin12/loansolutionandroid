@@ -2,7 +2,10 @@ import 'package:dada_loans/screens/loan%20history/loan_history.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../login/login.dart';
 import '../request loan/loan_request.dart';
+import 'documents_screen/documents_screen.dart';
+import 'edit profile/editProfile.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Map<String, dynamic>? user;
@@ -22,6 +25,141 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   bool notificationsEnabled = true;
+  bool _isRefreshing = false;
+
+  // Pull to refresh handler
+  Future<void> _handleRefresh() async {
+    setState(() {
+      _isRefreshing = true;
+    });
+
+    // Simulate data refresh - replace with your actual refresh logic
+    await Future.delayed(Duration(seconds: 2));
+
+    // Here you would typically:
+    // - Fetch updated user data
+    // - Fetch updated wallet data
+    // - Update the UI with new data
+
+    setState(() {
+      _isRefreshing = false;
+    });
+
+    // Show success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Profile refreshed successfully'),
+        backgroundColor: Color(0xFF059669),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  // Logout confirmation dialog
+  Future<void> _showLogoutConfirmation() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Color(0xFFFEF2F2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.logout,
+                  color: Color(0xFFDC2626),
+                  size: 24,
+                ),
+              ),
+              SizedBox(width: 16),
+              Text(
+                'Logout',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF111827),
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            'Are you sure you want to logout? You will need to login again to access your account.',
+            style: TextStyle(
+              fontSize: 16,
+              color: Color(0xFF6B7280),
+              height: 1.5,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Color(0xFF6B7280),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _performLogout();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFFDC2626),
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              child: Text(
+                'Logout',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Perform logout and navigate to login screen
+  void _performLogout() {
+    // Add haptic feedback
+    HapticFeedback.mediumImpact();
+
+    // Clear any stored tokens/data here
+    // Example: SharedPreferences, secure storage, etc.
+
+    // Navigate to login screen and clear the entire navigation stack
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+          (Route<dynamic> route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,27 +167,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final wallet = widget.wallet;
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFFF0FDF4),
-              Colors.white,
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildHeader(user),
-                _buildStatsCards(wallet),
-                _buildMenuItems(),
-                _buildQuickActions(),
-                SizedBox(height: 20),
+      body: RefreshIndicator(
+        onRefresh: _handleRefresh,
+        color: Color(0xFF059669),
+        backgroundColor: Colors.white,
+        strokeWidth: 2.5,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFF0FDF4),
+                Colors.white,
               ],
+            ),
+          ),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(), // Enables pull-to-refresh even when content doesn't fill screen
+              child: Column(
+                children: [
+                  _buildHeader(user),
+                  _buildStatsCards(wallet),
+                  _buildMenuItems(),
+                  _buildQuickActions(),
+                  _buildLogoutSection(),
+                  SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         ),
@@ -61,7 +207,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final name = user?['name'] ?? 'User';
     final profileImageUrl = user?['profile_image_url'];
     final imageUrl = profileImageUrl != null
-        ? "http://10.0.2.2:3000/uploads/$profileImageUrl"
+        ? "http://16.171.240.97:3000/uploads/$profileImageUrl"
         : null;
 
     return Container(
@@ -95,10 +241,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: IconButton(
-                  onPressed: () {
+                  onPressed: () async {
                     HapticFeedback.lightImpact();
-                    // Handle edit profile
+                    final updated = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => EditProfileScreen(
+                          user: widget.user!,
+                          token: widget.token!,
+                        ),
+                      ),
+                    );
+
+                    if (updated == true) {
+                      setState(() {}); // Refresh UI after edit
+                    }
                   },
+
                   icon: Icon(Icons.edit, color: Colors.white, size: 20),
                 ),
               ),
@@ -206,35 +365,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               SizedBox(height: 4),
-              Text(
-                'Premium Member',
-                style: TextStyle(
-                  color: Color(0xFFBBF7D0),
-                  fontSize: 16,
-                ),
-              ),
+
               SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ...List.generate(
-                    5,
-                        (index) => Icon(
-                      Icons.star,
-                      color: Color(0xFFFDE047),
-                      size: 20,
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    '5.0 Rating',
-                    style: TextStyle(
-                      color: Color(0xFFBBF7D0),
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
+
             ],
           ),
         ],
@@ -249,7 +382,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final stats = [
       {'label': 'Wallet Balance', 'value': 'XAF $balance', 'icon': Icons.account_balance_wallet},
       {'label': 'Wallet ID', 'value': walletId, 'icon': Icons.credit_card},
-      {'label': 'Active Loans', 'value': '1', 'icon': Icons.credit_card},
     ];
 
     return Transform.translate(
@@ -321,7 +453,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       {'icon': Icons.security, 'label': 'Security', 'subtitle': 'Privacy and security settings'},
       {'icon': Icons.notifications, 'label': 'Notifications', 'subtitle': 'Manage your preferences'},
       {'icon': Icons.card_giftcard, 'label': 'Rewards', 'subtitle': 'Loyalty points and benefits'},
-      {'icon': Icons.settings, 'label': 'Settings', 'subtitle': 'Account and app preferences'},
     ];
 
     return Container(
@@ -352,8 +483,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
           borderRadius: BorderRadius.circular(16),
           onTap: () {
             HapticFeedback.lightImpact();
-            // Handle menu item tap
+
+            if (item['label'] == 'Documents') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => DocumentsScreen(
+                    userId: widget.user!['id'],
+                    token: widget.token!,
+                  ),
+                ),
+              );
+            }
+
+            if (item['label'] == 'My Loans') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => LoanHistoryScreen(
+                    user: widget.user!,
+                    wallet: widget.wallet,
+                    token: widget.token!,
+                  ),
+                ),
+              );
+            }
           },
+
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Row(
@@ -523,6 +679,86 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 textAlign: TextAlign.center,
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // New logout section
+  Widget _buildLogoutSection() {
+    return Container(
+      margin: EdgeInsets.fromLTRB(24, 32, 24, 0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Color(0xFFFEE2E2), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: () {
+              HapticFeedback.lightImpact();
+              _showLogoutConfirmation();
+            },
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: Color(0xFFFEF2F2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.logout,
+                      color: Color(0xFFDC2626),
+                      size: 24,
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Logout',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFFDC2626),
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'Sign out of your account',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF6B7280),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right,
+                    color: Color(0xFF9CA3AF),
+                    size: 20,
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),

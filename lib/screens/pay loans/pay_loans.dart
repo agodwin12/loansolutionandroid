@@ -60,7 +60,7 @@ class _PayLoanScreenState extends State<PayLoanScreen> with TickerProviderStateM
     });
 
     final url = Uri.parse(
-      "http://10.0.2.2:3000/api/loans/user/${widget.user['id']}/approved",
+      "http://16.171.240.97:3000/api/loans/user/${widget.user['id']}/approved",
     );
 
     try {
@@ -270,7 +270,7 @@ class _PayLoanScreenState extends State<PayLoanScreen> with TickerProviderStateM
     final enteredAmount = double.tryParse(amountController.text);
 
     final url = Uri.parse(
-      "http://10.0.2.2:3000/api/loans/${latestLoan!['id']}/pay",
+      "http://16.171.240.97:3000/api/loans/${latestLoan!['id']}/pay",
     );
 
     setState(() {

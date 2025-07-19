@@ -208,7 +208,7 @@ class _LoanRequestScreenState extends State<LoanRequestScreen> with TickerProvid
 
     try {
       final response = await http.post(
-        Uri.parse("http://10.0.2.2:3000/api/loans/request"), // replace with your API URL
+        Uri.parse("http://16.171.240.97:3000/api/loans/request"), // replace with your API URL
         headers: {
           "Content-Type": "application/json",
           if (widget.token != null)

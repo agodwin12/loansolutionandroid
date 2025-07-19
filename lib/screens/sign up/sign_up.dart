@@ -21,7 +21,7 @@ Future<void> signupUser({
   File? idCardFront,
   File? idCardBack,
 }) async {
-  var uri = Uri.parse('http://10.0.2.2:3000/api/auth/signup');
+  var uri = Uri.parse('http://16.171.240.97:3000/api/auth/signup');
 
   var request = http.MultipartRequest('POST', uri);
   request.fields['name'] = name;

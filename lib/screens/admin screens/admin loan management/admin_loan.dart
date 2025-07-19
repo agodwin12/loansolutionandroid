@@ -96,7 +96,7 @@ class _LoanManagementScreenState extends State<LoanManagementScreen>
       _loading = true;
     });
 
-    final url = Uri.parse("http://10.0.2.2:3000/api/admin/loans/pending");
+    final url = Uri.parse("http://16.171.240.97:3000/api/admin/loans/pending");
 
     try {
       final response = await http.get(
@@ -248,7 +248,7 @@ class _LoanManagementScreenState extends State<LoanManagementScreen>
   }
 
   Future<void> approveLoan(int loanId) async {
-    final url = Uri.parse("http://10.0.2.2:3000/api/admin/loans/$loanId/approve");
+    final url = Uri.parse("http://16.171.240.97:3000/api/admin/loans/$loanId/approve");
 
     try {
       final response = await http.put(
@@ -271,7 +271,7 @@ class _LoanManagementScreenState extends State<LoanManagementScreen>
   }
 
   Future<void> rejectLoan(int loanId, String reason) async {
-    final url = Uri.parse("http://10.0.2.2:3000/api/admin/loans/$loanId/reject");
+    final url = Uri.parse("http://16.171.240.97:3000/api/admin/loans/$loanId/reject");
 
     try {
       final response = await http.put(
@@ -297,7 +297,7 @@ class _LoanManagementScreenState extends State<LoanManagementScreen>
   }
 
   Future<void> processingLoan(int loanId) async {
-    final url = Uri.parse("http://10.0.2.2:3000/api/admin/loans/$loanId/processing");
+    final url = Uri.parse("http://16.171.240.97:3000/api/admin/loans/$loanId/processing");
 
     try {
       final response = await http.put(
@@ -521,7 +521,7 @@ class _LoanManagementScreenState extends State<LoanManagementScreen>
                                 child: CircleAvatar(
                                   radius: 28,
                                   backgroundImage: user?["profile_image_url"] != null
-                                      ? NetworkImage("http://10.0.2.2:3000/uploads/${user!["profile_image_url"]}")
+                                      ? NetworkImage("http://16.171.240.97:3000/uploads/${user!["profile_image_url"]}")
                                       : null,
                                   child: user?["profile_image_url"] == null
                                       ? Icon(Icons.person, color: Colors.white, size: 28)

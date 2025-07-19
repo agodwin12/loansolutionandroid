@@ -21,6 +21,15 @@ dependencies:
   http: ^1.2.0
   shared_preferences: ^2.5.3
   google_fonts: ^6.2.1
+  flutter_launcher_icons: ^0.13.1 # check for latest
+
+
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/money.jpg"
+
 
 dev_dependencies:
   flutter_test:

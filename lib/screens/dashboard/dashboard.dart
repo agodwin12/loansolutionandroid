@@ -65,7 +65,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
     }
 
     final url = Uri.parse(
-      "http://10.0.2.2:3000/api/wallets/${_wallet!['wallet_id']}",
+      "http://16.171.240.97:3000/api/wallets/${_wallet!['wallet_id']}",
     );
 
     try {
@@ -112,7 +112,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
 
     try {
       final url = Uri.parse(
-        "http://10.0.2.2:3000/api/loans/user/${_user!['id']}/recent",
+        "http://16.171.240.97:3000/api/loans/user/${_user!['id']}/recent",
       );
 
       final response = await http.get(
@@ -310,10 +310,16 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
 
     return Scaffold(
       backgroundColor: Color(0xFFF8FAFC),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(20),
-          child: Column(
+    body: SafeArea(
+    child: RefreshIndicator(
+    onRefresh: () async {
+    await refreshWallet();
+    await fetchRecentLoans();
+    },
+    child: SingleChildScrollView(
+    physics: AlwaysScrollableScrollPhysics(), // Required for pull-to-refresh even when content is less
+    padding: EdgeInsets.all(20),
+    child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
@@ -374,6 +380,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
           ),
         ),
       ),
+    ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTap: _onNavTap,
@@ -384,7 +391,7 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
   Widget _buildHeader(Map<String, dynamic> user) {
     final profileImageUrl = user['profile_image_url'] as String?;
     final imageUrl = profileImageUrl != null
-        ? "http://10.0.2.2:3000/uploads/$profileImageUrl"
+        ? "http://16.171.240.97:3000/uploads/$profileImageUrl"
         : null;
 
     return Row(

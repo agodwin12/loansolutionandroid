@@ -97,7 +97,7 @@ class _AddAdminScreenState extends State<AddAdminScreen>
     });
 
     try {
-      final url = Uri.parse("http://10.0.2.2:3000/api/admin/create");
+      final url = Uri.parse("http://16.171.240.97:3000/api/admin/create");
 
       var request = http.MultipartRequest('POST', url);
       request.headers['Authorization'] = 'Bearer ${widget.token}';

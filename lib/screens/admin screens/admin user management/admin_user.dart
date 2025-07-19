@@ -43,7 +43,7 @@ class _UserManagementScreenState extends State<UserManagementScreen>
 
     try {
       final userRes = await http.get(
-        Uri.parse("http://10.0.2.2:3000/api/admin/users"),
+        Uri.parse("http://16.171.240.97:3000/api/admin/users"),
         headers: {
           "Authorization": "Bearer ${widget.token}",
           "Content-Type": "application/json",
@@ -51,7 +51,7 @@ class _UserManagementScreenState extends State<UserManagementScreen>
       );
 
       final adminRes = await http.get(
-        Uri.parse("http://10.0.2.2:3000/api/admin/admins"),
+        Uri.parse("http://16.171.240.97:3000/api/admin/admins"),
         headers: {
           "Authorization": "Bearer ${widget.token}",
           "Content-Type": "application/json",
@@ -103,7 +103,7 @@ class _UserManagementScreenState extends State<UserManagementScreen>
 
     try {
       final res = await http.delete(
-        Uri.parse("http://10.0.2.2:3000/api/admin/users/$userId"),
+        Uri.parse("http://16.171.240.97:3000/api/admin/users/$userId"),
         headers: {
           "Authorization": "Bearer ${widget.token}",
           "Content-Type": "application/json",
@@ -126,7 +126,7 @@ class _UserManagementScreenState extends State<UserManagementScreen>
 
     try {
       final res = await http.delete(
-        Uri.parse("http://10.0.2.2:3000/api/admin/admins/$adminId"),
+        Uri.parse("http://16.171.240.97:3000/api/admin/admins/$adminId"),
         headers: {
           "Authorization": "Bearer ${widget.token}",
           "Content-Type": "application/json",
@@ -308,7 +308,7 @@ class _UserManagementScreenState extends State<UserManagementScreen>
               ),
               child: CircleAvatar(
                 backgroundImage: admin['profile_image_url'] != null
-                    ? NetworkImage("http://10.0.2.2:3000/uploads/${admin['profile_image_url']}")
+                    ? NetworkImage("http://16.171.240.97:3000/uploads/${admin['profile_image_url']}")
                     : null,
                 child: admin['profile_image_url'] == null
                     ? Icon(Icons.person, color: Colors.grey.shade600)
@@ -398,7 +398,7 @@ class _UserManagementScreenState extends State<UserManagementScreen>
               ),
               child: CircleAvatar(
                 backgroundImage: user['profile_image_url'] != null
-                    ? NetworkImage("http://10.0.2.2:3000/uploads/${user['profile_image_url']}")
+                    ? NetworkImage("http://16.171.240.97:3000/uploads/${user['profile_image_url']}")
                     : null,
                 child: user['profile_image_url'] == null
                     ? Icon(Icons.person, color: Colors.grey.shade600)

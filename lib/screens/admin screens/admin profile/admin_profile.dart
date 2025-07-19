@@ -51,7 +51,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
 
     try {
       final url = Uri.parse(
-        "http://10.0.2.2:3000/api/admin/profile/${widget.admin['id']}",
+        "http://16.171.240.97:3000/api/admin/profile/${widget.admin['id']}",
       );
 
       final response = await http.get(
@@ -282,7 +282,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
 
   Widget _buildProfileHeader() {
     final imageUrl = _profile?["profile_image_url"] != null
-        ? "http://10.0.2.2:3000/uploads/${_profile!["profile_image_url"]}"
+        ? "http://16.171.240.97:3000/uploads/${_profile!["profile_image_url"]}"
         : null;
 
     return Container(
